@@ -1,0 +1,28 @@
+{
+  "name": "file_uploader",
+  "version": "1.0.0",
+  "description": "Secure Software Development - Assignment 2",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SasithaLY/file_uploader.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SasithaLY/file_uploader/issues"
+  },
+  "homepage": "https://github.com/SasithaLY/file_uploader#readme",
+  "dependencies": {
+    "ejs": "^3.1.5",
+    "express": "^4.17.1",
+    "googleapis": "^59.0.0",
+    "multer": "^1.4.2",
+    "nodemon": "^2.0.4"
+  }
+}

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Open+Sans:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.js"
+        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous">
+        </script>
+   
+    <title>Drive Uploader</title>
+</head>
+
+<body>
+    <!-- <div>
+        <div class="nav-container">
+            <nav class="navbar navbar-light bg-light justify-content-between">
+                <a class="navbar-brand logo"><span style="color: red;">Drive</span> Uploader</a>
+                <div class="user">
+                    <img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg"
+                        width="40" height="40" class="rounded-circle">
+                    <span class="mx-2">Sasitha Layan</span>
+                    <button class="btn btn-outline-danger">Logout</button>
+                </div>
+
+            </nav>
+        </div>
+    </div> -->
+    <script>
+        $(function () {
+            $("#header").load("header.ejs");
+            //$("#footer").load("footer.html"); 
+        });
+    </script>
+    <div id="header">
+
+    </div>
+
+    <div class="container mt-5">
+        <div class="jumbotron text-center">
+            <h2>Upload Files To Google Drive</h2>
+            <div class="mt-3">
+                <a href="<%=url%>">
+                    <button class="btn btn-light px-3"><img class="mx-2" src="./google.png" width="32"
+                            height="32" />Sign in
+                        with Google</button>
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+<!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script> -->
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+    crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+    integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+    crossorigin="anonymous"></script>
+
+</html>
