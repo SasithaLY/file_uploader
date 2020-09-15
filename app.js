@@ -9,6 +9,8 @@ const CLIENT_ID = OAuth2Data.web.client_id;
 const CLIENT_SECRET = OAuth2Data.web.client_secret;
 const REDERECT_URI = OAuth2Data.web.redirect_uris[0];
 
+let name,photo;
+
 const oAuth2Client = new google.auth.OAuth2(
     CLIENT_ID,
     CLIENT_SECRET,
@@ -32,7 +34,26 @@ app.get('/', (req,res) => {
         console.log(url);
         res.render("index", {url:url}); 
     }else{
-        res.render("uploader");
+
+        let oAuth2 = google.oauth2({
+            auth:oAuth2Client,
+            version:'v2'
+        });
+
+
+        oAuth2.userinfo.get((error, response)=>{
+            if(error){
+                throw error;
+            }else{
+                console.log(response.data);
+                name = response.data.name;
+                photo = response.data.picture;
+            }
+        })
+
+        res.render("uploader", {name:name,photo:photo});
+        
+
     }
     
 });
@@ -56,6 +77,7 @@ app.get('/google/callback' , (req,res) => {
         })
     }
 })
+
 
 
 app.listen(5000,() => {

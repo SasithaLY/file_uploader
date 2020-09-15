@@ -20,17 +20,77 @@
 
 <body>
 
-    <script>
+    <!-- <script>
         $(function () {
             $("#header").load("header.ejs");
-            //$("#footer").load("footer.html"); 
+         
         });
     </script>
     <div id="header">
 
+    </div> -->
+    <div>
+        <div>
+            <div class="nav-container">
+                <nav class="navbar navbar-light bg-light justify-content-between">
+                    <a href="/" class="navbar-brand logo"><span style="color: red;">Drive</span> Uploader</a>
+                    <div class="user">
+                        <img src="<%=photo%>" width="40" height="40" class="rounded-circle">
+                        <span class="mx-2"><%=name%></span>
+                        <button class="btn btn-outline-danger">Logout</button>
+                    </div>
+
+                </nav>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row mt-5">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Files and Folders in Your Drive</h3>
+                        </div>
+                        <div class="card-body">
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <h3>Upload Files</h3>
+                        </div>
+                        <div class="card-body ">
+
+                            <form action="/upload" method="POST" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <input type="file" class="form-control" />
+                                    <input type="button" class="btn btn-block btn-success form-control mt-5"
+                                        value="UPLOAD" />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
     </div>
 
-    Authenticated!
+
 </body>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+    crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+    integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+    crossorigin="anonymous"></script>
 
 </html>
