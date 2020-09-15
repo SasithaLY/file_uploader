@@ -1,14 +1,37 @@
-<div>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Open+Sans:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="./styles.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.js"
+        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous">
+        </script>
+    <title>Google Drive Uploader</title>
+</head>
+
+<body>
     <div class="nav-container">
         <nav class="navbar navbar-light bg-light justify-content-between">
-            <a href="/" class="navbar-brand logo"><span style="color: red;">Drive</span> Uploader</a>
-            <div class="user">
-                <img src="<%=photo%>"
-                    width="40" height="40" class="rounded-circle">
-                <span class="mx-2" id="name"><%=name%></span>
-                <button class="btn btn-outline-danger">Logout</button>
-            </div>
+            <a href="/" class="navbar-brand logo"><img src="./driveico.png" width="40" height="auto"
+                    class="mx-3" /><span style="color: red;">Drive</span> Uploader</a>
 
+            <% if(auth) { %>
+            <input type="hidden" id="auth" value="<%-auth%>" />
+            <div class="user">
+                <img src="<%-photo%>" width="40" height="40" class="rounded-circle" alt="">
+                <span class="mx-2"><%-name%></span>
+                <a href="/logout"><button class="btn btn-outline-danger">Logout</button></a>
+
+            </div>
+            <% } %>
         </nav>
     </div>
-</div>
+   
