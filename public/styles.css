@@ -31,3 +31,17 @@ a{
     margin-right: 5%;
 }
 
+.item{
+    border:lightgrey solid 1px;
+    margin-bottom: 15px; 
+    list-style-type: none;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+
+.files{
+    overflow-y: auto;
+    max-height: 60vh;
+   
+}
