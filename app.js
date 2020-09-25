@@ -3,7 +3,9 @@ const { google } = require("googleapis");
 const multer = require("multer");
 const fs = require("fs");
 const bodyParser = require('body-parser');
+const formidable = require('formidable');
 const app = express();
+
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -83,54 +85,65 @@ app.get("/google/redirect", (req, res) => {
 });
 
 app.post("/upload", (req, res) => {
+  let form = new formidable.IncomingForm();
 
-  upload(req, res, (error) => {
-    if (error) {
-      throw error;
-    } else {
-      let size = fs.lstatSync(req.file.path).size;
-      let bytes = 0;
+  form.parse(req, (err, fields, files) =>{
+    if(err) return res.status(400).send(err);
 
-      const drive = google.drive({
-        version: "v3",
-        auth: oAuth2Client,
-      });
+    const drive = google.drive({
+      version: "v3",
+      auth: oAuth2Client,
+    });
 
-      const filemetadata = {
-        name: req.file.filename,
-      };
+    const filemetadata = {
+      name: files.file.name,
+      parents: [fields.folder]
+    };
 
-      const media = {
-        mimeType: req.file.mimetype,
-        body: fs.createReadStream(req.file.path).on("data", (chunk) => {
-          bytes += (chunk.length / size) * 100;
-          console.log(Math.round(bytes) + "%", size);
-        }),
-      };
+    let size = fs.lstatSync(files.file.path).size;
+    let bytes = 0;
 
-      drive.files.create(
-        {
-          resource: filemetadata,
-          media: media,
-          fields: "id",
-        },
-        (error, file) => {
-          if (error) {
-            throw error;
-          } else {
-            fs.unlinkSync(req.file.path);
-            res.json({ success: true });
-          }
+    const media = {
+      mimeType: files.file.type,
+      body: fs.createReadStream(files.file.path).on("data", (chunk) => {
+        bytes += (chunk.length / size) * 100;
+        console.log(Math.round(bytes) + "%", size);
+      }),
+    };
+
+    drive.files.create(
+      {
+        resource: filemetadata,
+        media: media,
+        fields: "id",
+      },
+      (error, file) => {
+        if (error) {
+          console.error(error);
+          res.status(400).send(error);
+        } else {
+          //fs.unlinkSync(req.file.path);
+          res.json({ success: true });
         }
-      );
-    }
-  });
+      }
+    );
+  })
+
+  // upload(req, res, (error) => {
+  //   if (error) {
+  //     throw error;
+  //   } else {
+  //     let size = fs.lstatSync(req.file.path).size;
+  //     let bytes = 0;
+
+      
+  //   }
+  // });
 });
 
 app.get("/getfiles", (req, res) => {
   const drive = google.drive({ version: "v3", auth: oAuth2Client });
-  //let parent = req.parent;
-  console.log(req.query);
+
   drive.files.list(
     {
       //pageSize: 10,
@@ -139,17 +152,13 @@ app.get("/getfiles", (req, res) => {
       fields: "nextPageToken, files(id, name, mimeType, parents)",
     },
     (err, data) => {
-      if (err) return console.log("The API returned an error: " + err);
+      if (err) return res.status(400).send(err); 
+      //console.log("The API returned an error: " + err);
       const files = data.data.files;
       if (files.length) {
-        
         res.json({ files: files });
-        // files.map((file) => {
-        //   console.log(`${file.name} (${file.id})`);
-        // });
       } else {
         res.json({ error: "No files found." });
-        //console.log("No files found.");
       }
     }
   );

@@ -1,21 +1,24 @@
-//let parents = '<button class="btn btn-sm btn-outline-primary">Drive</button>';
-
 let breadcrumbs = [{ id: "root", name: "Drive" }];
+
 $(document).ready(function () {
   getFiles("root");
   $("#success").hide();
   $(document).on("click", function (e) {
     if (e.target) {
-      // if (e.target.id == "btnSearch") {
-      // }
+      if (e.target.id == "btnUpload") {
+        if ($("#file").val() != "") {
+          $("#error").hide();
+          upload();
+        } else {
+          $("#error").show();
+        }
+      }
     }
   });
 
   $("#files li").on("click", function () {
-    //  ret = DetailsView.GetProject($(this).attr("#data-id"), OnComplete, OnTimeOut, OnError);
     console.log($(this).attr("data-id"));
     breadcrumbs.push({ id: $(this).attr("id"), name: $(this).attr("data-id") });
-    //getFiles(`${$(this).attr("id")}`);
   });
 });
 
@@ -25,14 +28,14 @@ function retrieve(folder) {
 }
 
 function getFolder(folder) {
-  let index = breadcrumbs.findIndex(obj => obj.id === folder);
+  let index = breadcrumbs.findIndex((obj) => obj.id === folder);
   breadcrumbs.length = index + 1;
   getFiles(folder);
 }
 
 function getFiles(folder) {
   var base_url = window.location.origin;
-
+  $("#fileLoader").show();
   $.ajax({
     type: "GET",
     url: base_url + "/getfiles",
@@ -40,23 +43,31 @@ function getFiles(folder) {
       "Content-Type": "application/json",
     },
     data: { parent: folder },
+    error: function (request, status, error) {
+      console.log(request.responseText);
+      window.location.reload();
+    },
     success: function (data) {
       console.log(data);
-      if (data.error) {
-      } else {
+      $("#fileLoader").hide();
+      if (data) {
         let parents = "";
         $.each(breadcrumbs, function (i, item) {
           console.log(item.id);
-          if(i === breadcrumbs.length-1){
-            parents += ' <button onclick="getFolder(`' + item.id + '`);" class="btn btn-sm btn-outline-success">' + item.name + '</button>  ';
-          }else{
-            parents += ' <button onclick="getFolder(`' + item.id + '`);" class="btn btn-sm btn-outline-success">' + item.name + '</button> > ';
+          if (i === breadcrumbs.length - 1) {
+            parents += ' <button onclick="getFolder(`' + item.id + '`);" class="btn btn-sm btn-outline-success">' + item.name + "</button>  ";
+          } else {
+            parents += ' <button onclick="getFolder(`' + item.id + '`);" class="btn btn-sm btn-outline-success">' + item.name + "</button> > ";
           }
-          
         });
         $("#breadcrumbs").html(parents);
 
-        setFiles(data.files);
+        if (data.error) {
+          let st = '<span style="color:red;">' + data.error + "</span>";
+          $("#files").html(st);
+        } else {
+          setFiles(data.files);
+        }
       }
     },
   });
@@ -68,11 +79,20 @@ function setFiles(data) {
   $.each(data, function (i, item) {
     if (item.mimeType.includes("folder")) {
       st +=
-        '<a href="#" onclick="retrieve(this);" data-id="'+item.name+'" id="'+item.id+'"><li class="item"><img width="40" height="auto" src="./folder.png">' +
+        '<a href="#" onclick="retrieve(this);" data-id="' +
+        item.name +
+        '" id="' +
+        item.id +
+        '"><li class="d-flex  align-items-center item"><img width="40" height="auto" src="./folder.png">' +
         item.name +
         "</li></a>";
     } else {
-      st += '<li class="item" >' + item.name + "</li>";
+      st +=
+        '<li class="d-flex justify-content-between align-items-center item" >' +
+        item.name +
+        '<div><a href="#"><i class="fas fa-trash-alt mx-2 delete"></i></a>' +
+        '<a href="#"><i class="fas fa-download download"></i></a>' +
+        "</div></li>";
     }
   });
 
@@ -80,14 +100,14 @@ function setFiles(data) {
 }
 
 function upload() {
+  $("#loader").show();
   $("#btnUpload").prop("disabled", true);
   var base_url = window.location.origin;
   var data = new FormData();
   var file = document.getElementById("file").files[0];
   data.append("file", file);
-  data.append("folder", breadcrumbs[breadcrumbs.length-1].id);
+  data.append("folder", breadcrumbs[breadcrumbs.length - 1].id);
 
-  //console.log(data.getAll("folder"));
   $.ajax({
     type: "POST",
     url: base_url + "/upload",
@@ -96,12 +116,19 @@ function upload() {
     contentType: false,
     cache: false,
     async: true,
+    timeout: 600000,
+    error: function (request, status, error) {
+      console.log(request.responseText);
+      window.location.reload();
+    },
     success: function (data) {
       console.log(data);
       $("#btnUpload").prop("disabled", false);
+      $("#loader").hide();
       if (data) {
+        $("#uploadForm").trigger("reset");
         showSuccess();
-        getFolder(breadcrumbs[breadcrumbs.length-1].id);
+        getFolder(breadcrumbs[breadcrumbs.length - 1].id);
       }
     },
   });

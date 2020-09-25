@@ -11,6 +11,9 @@ var auth = auth;
 <div>
 
     <div class="container-fluid">
+
+
+
         <div class="row mt-5">
             <div class="col-md-8">
                 <div class="card">
@@ -18,14 +21,21 @@ var auth = auth;
                         <h3>Files and Folders in Your Drive</h3>
                     </div>
                     <div class="card-body main">
-                        <div id="breadcrumbs" >
-                            
+                        <div id="fileLoader" class="overlay">
+                            <div class="loader" id="loader-4">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
                         </div>
-                        <hr/>
-                        <div  class="files mt-4">
-                            
+                        <div id="breadcrumbs">
+
+                        </div>
+                        <hr />
+                        <div class="files mt-4">
+
                             <ul class="list-group" id="files">
-                         
+                                
                             </ul>
                         </div>
                     </div>
@@ -34,17 +44,28 @@ var auth = auth;
 
             <div class="col-md-4">
                 <div class="card">
+
                     <div class="card-header text-center">
                         <h3>Upload Files</h3>
                     </div>
-                    <div class="card-body ">
+                    <div class="card-body">
+                        <div id="loader" class="overlay">
+                            <div class="loader" id="loader-4">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
 
                         <div id="successMsg"></div>
 
                         <form id="uploadForm" name="uploadForm" method="POST" enctype="multipart/form-data">
+
                             <div class="form-group">
                                 <input type="file" id="file" name="file" class="form-control mt-5" required />
-                                <input type="button" id="btnUpload" onclick="upload();"
+                                <span id="error" style="color: red; font-size: small; display: none;">Please Select a
+                                    File.</span>
+                                <input type="button" id="btnUpload"
                                     class="btn btn-lg btn-block btn-success form-control mt-5" value="UPLOAD" />
                             </div>
 
