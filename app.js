@@ -2,8 +2,9 @@ const express = require("express");
 const { google } = require("googleapis");
 const multer = require("multer");
 const fs = require("fs");
-const bodyParser = require('body-parser');
-const formidable = require('formidable');
+const bodyParser = require("body-parser");
+const formidable = require("formidable");
+const path = require("path");
 const app = express();
 
 app.set("view engine", "ejs");
@@ -11,6 +12,8 @@ app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const OAuth2Data = require("./credentials.json");
+const e = require("express");
+const { file } = require("googleapis/build/src/apis/file");
 
 const CLIENT_ID = OAuth2Data.web.client_id;
 const CLIENT_SECRET = OAuth2Data.web.client_secret;
@@ -87,8 +90,8 @@ app.get("/google/redirect", (req, res) => {
 app.post("/upload", (req, res) => {
   let form = new formidable.IncomingForm();
 
-  form.parse(req, (err, fields, files) =>{
-    if(err) return res.status(400).send(err);
+  form.parse(req, (err, fields, files) => {
+    if (err) return res.status(400).send(err);
 
     const drive = google.drive({
       version: "v3",
@@ -97,7 +100,7 @@ app.post("/upload", (req, res) => {
 
     const filemetadata = {
       name: files.file.name,
-      parents: [fields.folder]
+      parents: [fields.folder],
     };
 
     let size = fs.lstatSync(files.file.path).size;
@@ -127,7 +130,7 @@ app.post("/upload", (req, res) => {
         }
       }
     );
-  })
+  });
 
   // upload(req, res, (error) => {
   //   if (error) {
@@ -136,7 +139,6 @@ app.post("/upload", (req, res) => {
   //     let size = fs.lstatSync(req.file.path).size;
   //     let bytes = 0;
 
-      
   //   }
   // });
 });
@@ -147,12 +149,12 @@ app.get("/getfiles", (req, res) => {
   drive.files.list(
     {
       //pageSize: 10,
-      q:`'${req.query.parent}' in parents and trashed=false`,
-      orderBy:"folder",
+      q: `'${req.query.parent}' in parents and trashed=false`,
+      orderBy: "folder",
       fields: "nextPageToken, files(id, name, mimeType, parents)",
     },
     (err, data) => {
-      if (err) return res.status(400).send(err); 
+      if (err) return res.status(400).send(err);
       //console.log("The API returned an error: " + err);
       const files = data.data.files;
       if (files.length) {
@@ -162,6 +164,63 @@ app.get("/getfiles", (req, res) => {
       }
     }
   );
+});
+
+app.post("/delete/:id", (req, res) => {
+  const drive = google.drive({ version: "v3", auth: oAuth2Client });
+
+  let id = req.params.id;
+
+  drive.files.update(
+    {
+      fileId: id,
+      resource: { trashed: true },
+    },
+    (err, data) => {
+      if (err) {
+        return res.status(400).send(err);
+      } else {
+        console.log(data.data);
+        res.json({ success: true });
+      }
+    }
+  );
+});
+
+app.get("/download/:id/:filename", (req, res) => {
+  let filename = req.params.filename;
+  let id = req.params.id;
+
+  //var dest = fs.createWriteStream("./uploads/" + filename);
+  //var path = "./uploads/" + filename;
+  const drive = google.drive({ version: "v3", auth: oAuth2Client });
+
+  drive.files
+    .get(
+      {
+        fileId: id,
+        alt: "media",
+      },
+      { responseType: "stream" }
+    )
+    .then((response) => {
+      response.data
+        .on("end", () => {
+          console.log("Done");
+        })
+        .on("error", (err) => {
+          console.log("Error", err);
+        })
+        .pipe(res);
+
+      // res.download(path, function (err) {
+      //   if (err) {
+      //     console.log("Error in Download");
+      //   } else {
+      //     fs.unlinkSync(path);
+      //   }
+      // });
+    });
 });
 
 app.get("/logout", (req, res) => {
