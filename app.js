@@ -146,6 +146,28 @@ app.post("/upload", (req, res) => {
   // });
 });
 
+app.get("/getfiles", (req, res) => {
+  const drive = google.drive({ version: "v3", auth: oAuth2Client });
+
+  drive.files.list(
+    {
+      //pageSize: 10,
+      q: `'${req.query.parent}' in parents and trashed=false`,
+      orderBy: "folder",
+      fields: "nextPageToken, files(id, name, mimeType, parents)",
+    },
+    (err, data) => {
+      if (err) return res.status(400).send(err);
+      //console.log("The API returned an error: " + err);
+      const files = data.data.files;
+      if (files.length) {
+        res.json({ files: files });
+      } else {
+        res.json({ error: "No files found." });
+      }
+    }
+  );
+});
 
 
 app.get("/logout", (req, res) => {
