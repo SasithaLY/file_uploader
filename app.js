@@ -190,6 +190,35 @@ app.post("/delete/:id", (req, res) => {
   );
 });
 
+app.get("/download/:id/:filename", (req, res) => {
+  let filename = req.params.filename;
+  let id = req.params.id;
+
+  //var dest = fs.createWriteStream("./uploads/" + filename);
+  //var path = "./uploads/" + filename;
+  const drive = google.drive({ version: "v3", auth: oAuth2Client });
+
+  drive.files
+    .get(
+      {
+        fileId: id,
+        alt: "media",
+      },
+      { responseType: "stream" }
+    )
+    .then((response) => {
+      response.data
+        .on("end", () => {
+          console.log("Done");
+        })
+        .on("error", (err) => {
+          console.log("Error", err);
+        })
+        .pipe(res);
+
+    });
+});
+
 app.get("/logout", (req, res) => {
   isAuth = false;
   res.redirect("/");
