@@ -169,6 +169,26 @@ app.get("/getfiles", (req, res) => {
   );
 });
 
+app.post("/delete/:id", (req, res) => {
+  const drive = google.drive({ version: "v3", auth: oAuth2Client });
+
+  let id = req.params.id;
+
+  drive.files.update(
+    {
+      fileId: id,
+      resource: { trashed: true },
+    },
+    (err, data) => {
+      if (err) {
+        return res.status(400).send(err);
+      } else {
+        console.log(data.data);
+        res.json({ success: true });
+      }
+    }
+  );
+});
 
 app.get("/logout", (req, res) => {
   isAuth = false;

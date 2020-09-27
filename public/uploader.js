@@ -149,4 +149,35 @@ function showSuccess() {
   $("#successMsg").html(st);
 }
 
+function deleteFile(id) {
+  var base_url = window.location.origin;
 
+  Swal.fire({
+    title: "Are you sure?",
+    text: "Your files will be moved to trash",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Delete",
+    cancelButtonText: "Cancel",
+  }).then((result) => {
+    if (result.value) {
+      $.ajax({
+        type: "POST",
+        url: base_url + "/delete/" + id,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: { id: id },
+        error: function (request, status, error) {
+          console.log(request.responseText);
+        },
+        success: function (data) {
+          console.log(data);
+          if (data.success) {
+            getFolder(breadcrumbs[breadcrumbs.length - 1].id);
+          }
+        },
+      });
+    }
+  });
+}
