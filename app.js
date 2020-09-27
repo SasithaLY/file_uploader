@@ -21,8 +21,11 @@ const REDERECT_URI = OAuth2Data.web.redirect_uris[0];
 
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDERECT_URI);
 
-const scopes =
-  "https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile";
+  const scopes = 'https://www.googleapis.com/auth/userinfo.profile'
+  +' https://www.googleapis.com/auth/drive.file'
+  +' https://www.googleapis.com/auth/drive.metadata'
+  +' https://www.googleapis.com/auth/drive.metadata.readonly'
+  +' https://www.googleapis.com/auth/drive.readonly';
 
 let name, photo;
 let isAuth = false;
