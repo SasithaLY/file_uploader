@@ -15,12 +15,15 @@ const OAuth2Data = require("./credentials.json");
 const e = require("express");
 const { file } = require("googleapis/build/src/apis/file");
 
+/* get credential details from credential file */
 const CLIENT_ID = OAuth2Data.web.client_id;
 const CLIENT_SECRET = OAuth2Data.web.client_secret;
 const REDERECT_URI = OAuth2Data.web.redirect_uris[0];
 
+/* create oauth client object */
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDERECT_URI);
 
+/* define scopes that need access */
   const scopes = 'https://www.googleapis.com/auth/userinfo.profile'
   +' https://www.googleapis.com/auth/drive.file'
   +' https://www.googleapis.com/auth/drive.metadata'
@@ -43,6 +46,7 @@ let upload = multer({
   storage: storage,
 }).single("file");
 
+/* route for authentication. */
 app.get("/", (req, res) => {
   if (!isAuth) {
     let url = oAuth2Client.generateAuthUrl({
@@ -70,10 +74,12 @@ app.get("/", (req, res) => {
   }
 });
 
+/* route for handling google callback */ 
 app.get("/google/redirect", (req, res) => {
   const code = req.query.code;
 
   if (code) {
+   /*  request token by passing the authorization code */
     oAuth2Client.getToken(code, function (error, tokens) {
       if (error) {
         console.log("Authentication Error!");
@@ -81,6 +87,7 @@ app.get("/google/redirect", (req, res) => {
       } else {
         console.log("Authentication Successful!");
         console.log(tokens);
+        /* save the token in oAuth2Client object */
         oAuth2Client.setCredentials(tokens);
         isAuth = true;
 
@@ -90,6 +97,7 @@ app.get("/google/redirect", (req, res) => {
   }
 });
 
+/* route for handling file upload */
 app.post("/upload", (req, res) => {
   let form = new formidable.IncomingForm();
 
@@ -128,24 +136,16 @@ app.post("/upload", (req, res) => {
           console.error(error);
           res.status(400).send(error);
         } else {
-          //fs.unlinkSync(req.file.path);
+          
           res.json({ success: true });
         }
       }
     );
   });
 
-  // upload(req, res, (error) => {
-  //   if (error) {
-  //     throw error;
-  //   } else {
-  //     let size = fs.lstatSync(req.file.path).size;
-  //     let bytes = 0;
-
-  //   }
-  // });
 });
 
+/* route to handle retrieving files*/
 app.get("/getfiles", (req, res) => {
   const drive = google.drive({ version: "v3", auth: oAuth2Client });
 
@@ -158,7 +158,6 @@ app.get("/getfiles", (req, res) => {
     },
     (err, data) => {
       if (err) return res.status(400).send(err);
-      //console.log("The API returned an error: " + err);
       const files = data.data.files;
       if (files.length) {
         res.json({ files: files });
@@ -169,6 +168,7 @@ app.get("/getfiles", (req, res) => {
   );
 });
 
+/* route for handling delete file */
 app.post("/delete/:id", (req, res) => {
   const drive = google.drive({ version: "v3", auth: oAuth2Client });
 
@@ -190,12 +190,11 @@ app.post("/delete/:id", (req, res) => {
   );
 });
 
+/* route for handling download file */
 app.get("/download/:id/:filename", (req, res) => {
   let filename = req.params.filename;
   let id = req.params.id;
 
-  //var dest = fs.createWriteStream("./uploads/" + filename);
-  //var path = "./uploads/" + filename;
   const drive = google.drive({ version: "v3", auth: oAuth2Client });
 
   drive.files
@@ -219,12 +218,14 @@ app.get("/download/:id/:filename", (req, res) => {
     });
 });
 
+/* route for handling logout */
 app.get("/logout", (req, res) => {
   isAuth = false;
   res.redirect("/");
 });
 
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
   console.log(`Server Started Running On Port ${PORT}`);
 });
